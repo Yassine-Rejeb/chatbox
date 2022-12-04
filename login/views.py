@@ -20,11 +20,11 @@ def signin(request):
     password = request.POST['password']
     print("Email: " + email)
     print("Password: " + password)
+    if dbConn.findEmailWhenVerified(email) == None:
+        return render(request, 'login.html', {'loc':'../', 'error': 'Email not verified!'})
     if dbConn.find(email, password) == None:
-        return render(request, 'login.html', {'loc':'..', 'error': 'Invalid email/password!'})
-    elif dbConn.findEmailWhenVerified(email) == None:
-        return render(request, 'login.html', {'loc':'..', 'error': 'Email not verified!'})
-    else:
-        return redirect(views.chat, {'loc':'..', 'error': 'Login successful!'})
+        return render(request, 'login.html', {'loc':'../', 'error': 'Invalid email/password!'})
+    
+    return redirect(views.chat, {'loc':'../', 'error': 'Login successful!'})
     
     
