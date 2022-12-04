@@ -1,30 +1,47 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render
 import json
 from chat import views
 from login.models import mongoConnection
 from django.shortcuts import redirect
 
-times = 0
+def alreadyLoggedIn(request):
+    print('Already Logged In!')
+    if 'username' in request.session:
+        return True
+    return False
+
 def login(request):
-    global times
+    if alreadyLoggedIn(request):
+        return redirect('/chat/')
     print('Login Page Opened!')
-    times += 1
-    if request.path == '/login/signin/':
-        report_loc = '../signin/'
-    else: report_loc = 'signin/'
+    report_loc = 'signin/'
     return render(request, 'login.html', {'loc':report_loc,'error': ''})
 def signin(request):
+    if alreadyLoggedIn(request):
+        return redirect('/chat/')
     print('Login Request Made!')
-    dbConn = mongoConnection()
+    # GET REQUEST PARAMS
     email = request.POST['email']
     password = request.POST['password']
-    print("Email: " + email)
-    print("Password: " + password)
+
+    # CHECK IF USER EXISTS
+    dbConn = mongoConnection()
+    if dbConn.findEmail(email) == None:
+        return render(request, 'login.html', {'loc':'','error': 'Email and password do not match!'})
+
+    # CHECK IF EMAIL IS VERIFIED
     if dbConn.findEmailWhenVerified(email) == None:
-        return render(request, 'login.html', {'loc':'../', 'error': 'Email not verified!'})
-    if dbConn.find(email, password) == None:
-        return render(request, 'login.html', {'loc':'../', 'error': 'Invalid email/password!'})
+        print('Email not found!')
+        return render(request, 'login.html', {'loc':'','error': 'Email not verified!'})
     
-    return redirect(views.chat, {'loc':'../', 'error': 'Login successful!'})
-    
+    # CHECK IF PASSWORD IS CORRECT
+    user=dbConn.findEmail(email)
+    if  user['password'] != password:
+        print('Password incorrect!')
+        return render(request, 'login.html', {'loc':'','error': 'Email and password do not match!'})
+    else:
+        print('Login Successful!')
+        print(user['username'])
+        request.session['username'] = user['username']
+        return redirect('/chat/')
     

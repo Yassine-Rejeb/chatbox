@@ -48,8 +48,8 @@
       </ul>
       <div id="profileADD" style="position:relative; padding-left: 20px;width: 220px;">
         <div class="profileDiv" style="height: 45px;">
-          {{ user.username }}
-          <button>LOGOUT</button>
+          {{current_user}}
+          <a href="/chat/logout" > <button id="logoutButton" >LOGOUT</button> </a>
         </div>
         <div style="display: flex;">
           <input style="display: flex;" type="text" name="Add_user" placeholder="Add a friend" id="add_user">
