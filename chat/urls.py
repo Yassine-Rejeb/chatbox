@@ -6,4 +6,5 @@ urlpatterns = [
     #path("", views.index, name="index"),
     path("", views.chat, name="chat room"),
     path("logout/", views.Logout, name="logout"),
+    path("friends/", views.getFriends, name="friends"),
 ]

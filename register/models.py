@@ -6,7 +6,7 @@ class mongoConnection():
         self.db = self.client['chatbox']
         self.usersCollection = self.db['users']
     def insert(self, username, password, email, verified):
-        self.usersCollection.insert_one({'username': username, 'password': password, 'email': email, 'verified': verified})
+        self.usersCollection.insert_one({'username': username, 'password': password, 'email': email, 'verified': verified, 'friends': ["support"]})
     def find(self, username, password):
         return self.usersCollection.find_one({'username': username, 'password': password})
     def findEmail(self, email):

@@ -18,6 +18,14 @@
         <i class="fa fa-search"></i>
       </div>
       <ul class="list">
+        <script id="friend-template" type="text/x-handlebars-template">
+          <li class="clearfix">
+            <img src="{% static 'images/{{profile_image}}' %}" height="50" width="50" alt="user_img" />
+            <div class="about">
+              <div class="name">{% verbatim %}{{username}}{% endverbatim %}</div>
+            </div>
+        </script>
+
         <li class="clearfix">
           <img src="{% static 'images/yassine-rejeb.jpg' %}" height="50" width="50" alt="yass" />
           <div class="about">
@@ -118,7 +126,9 @@
 <!-- partial -->
 <script src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
 <script src='//cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.0/handlebars.min.js'></script>
-<script src='//cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js'></script><script  src="{% static 'script.js' %}"></script>
+<script src='//cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js'></script>
+<script  src="{% static 'script.js' %}"></script>
+<script  src="{% static 'script_friends.js' %}"></script>
 
 </body>
 </html>

@@ -173,6 +173,10 @@ body {
   color: #75b1e8;
 }
 
+.clearfix li:hover {
+  color: #75b1e8;
+}
+
 .people-list button {
   float: right;
   color: #94C2ED;
