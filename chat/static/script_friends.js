@@ -1,62 +1,34 @@
-(function(){
-  var chat = {
+/*(function(){
+  var friends = {
     init: function() {
       this.cacheDOM();
-      this.bindEvents();
       this.render();
     },
     cacheDOM: function() {
-      this.$chatHistory = $('.chat-history');
-      this.$button = $('button');
-      this.$textarea = $('#message-to-send');
-      this.$chatHistoryList =  this.$chatHistory.find('ul');
+      this.$list = $('.friend-list');
+      //this.$button = $('button');
+      this.$listItem = $('#friend-list');
+      //this.$chatHistoryList =  this.$chatHistory.find('ul');
     },
-    bindEvents: function() {
-      this.$button.on('click', this.addMessage.bind(this));
-      this.$textarea.on('keyup', this.addMessageEnter.bind(this));
+    getFriends: function() {
+      data = fetch('/chat/friends')
+      .then(response => response.json());
+      return data;
     },
     render: function() {
-      this.scrollToBottom();
-      if (this.messageToSend.trim() !== '') {
-        var template = Handlebars.compile( $("#message-template").html());
-
-        var context = { 
-          messageOutput: this.messageToSend,
-          time: this.getCurrentTime()
-        };
-        
-        console.log('context');
-
-        this.$chatHistoryList.append(template(context));
-        this.scrollToBottom();
-        this.$textarea.val('');
-        
-        // responses
-        var templateResponse = Handlebars.compile( $("#message-response-template").html());
-        var contextResponse = { 
-          response: this.getRandomItem(this.messageResponses),
-          time: this.getCurrentTime()
-        };
-        
-        setTimeout(function() {
-          this.$chatHistoryList.append(templateResponse(contextResponse));
-          this.scrollToBottom();
-        }.bind(this), 1500);
-        
+      friends = this.getFriends();
+      for (friend in friends) {
+        var template = Handlebars.compile( $("#friend-template").html() );
+        profile_image = fetch('/chat/profile_image/' + friend)
+        var context = {'friend': friend};
+      for (var i = 0; i < friends.length; i++) {
+        this.$list.append(this.$listItem);
       }
-      
-    },
+    }
+      console.log(context);
+  },
     
-    addMessage: function() {
-      this.messageToSend = this.$textarea.val()
-      this.render();         
-    },
-    addMessageEnter: function(event) {
-        // enter was pressed
-        if (event.keyCode === 13) {
-          this.addMessage();
-        }
-    },
+    
     scrollToBottom: function() {
        this.$chatHistory.scrollTop(this.$chatHistory[0].scrollHeight);
   },
@@ -70,7 +42,7 @@
     
   };
   
-  chat.init();
+  friends.init();
   
   var searchFilter = {
     options: { valueNames: ['name'] },
@@ -90,4 +62,46 @@
   
   searchFilter.init();
   
-})();
+})();*//*
+$.ajax({
+  url: 'friends',
+  success: function(data) {
+  console.log(data);
+  //$('#the-div-that-should-be-refreshed').html(data);
+  let list = document.getElementById("friend-list");
+  data.forEach((item)=>{
+  let li = document.createElement("li");
+  li.innerText = item;
+  list.appendChild(li);
+});
+  }
+});*/
+
+$(function() {
+  $.ajax({
+      type: "GET",
+      url: "friends/",
+      success: function(data) {
+        res= data
+        for (var i = 0; i < res.length; i++) {
+          var template = Handlebars.compile( $("#friend-template").html() );
+          var context={
+            friend: res[i],
+            profile_pic: '/chat/profile_pic/?username=' + res[i]
+          }
+          /*$.ajax({
+            type: 'GET',
+            url: 'profile_pic/?username=' + res[i],
+            dataType: 'image/png',
+            async: true,
+            success: function (data) {
+                console.log(data);
+                $("#template-img").attr("src", 'data:image/png;base64,'+data);
+            }
+        });*/
+            $("ul#friend-list").prepend(template(context));
+      }   
+      },
+    });  
+  return true;    
+});
