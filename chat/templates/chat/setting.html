@@ -1,0 +1,153 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Chat Room - User Settings</title>
+  <meta charset="utf-8">
+
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <!------ Include the above in your HEAD tag ---------->
+
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <!------ Include the above in your HEAD tag ---------->
+
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <style>
+      .respond button {
+          float: right;
+          color: #ffffff;
+          font-size: 20px;
+          text-transform: uppercase;
+          border: none;
+          cursor: pointer;
+          font-weight: bold;
+          background: #e3e7f5;
+      }
+      .respond button:hover {
+          color: #515960;
+          background: #676b76;
+    }
+  </style>
+
+</head>
+<body style="background-color:gainsboro ;">
+<hr>
+<div class="container bootstrap snippet border" style="align-content: center;width: 850px;background-color: #ffffff ;border-color:#3d8ed4 ;border-width: 10px;border-radius: 10px;">
+    
+    <div class="row" style="align-self: center ;">
+  		<div class="col-sm-9" >
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#General" aria-expanded="true" class="active show">General</a></li>
+                <li class=""><a data-toggle="tab" href="#settings" class="" aria-expanded="false">Notifications</a></li>
+            </ul>
+
+              
+        <div class="tab-content">
+            <!-- General tab pane -->
+            <div class="tab-pane show active" id="General">
+                
+                <form class="form" action="/chat/update/" method="post" id="registrationForm">
+                    {% csrf_token %}
+                      <div class="form-group">
+                          
+                          <div class="col-xs-6">
+                              <label for="username"><h4>Username</h4></label>
+                              <input type="text" class="form-control" id="username" name="username" title="Change your username" placeholder="New Username">
+                          </div>
+                      </div>
+                      
+                      <div class="form-group">
+                          <div class="col-xs-6">
+                             <label for="profile_pic"><h4>Profile Pic</h4></label>
+                              <input class="form-control" id="mobile" type="file" name="profile_pic" placeholder="Change your picture" title="Change your profile picture.">
+                          </div>
+                      </div>
+                      
+                      <div class="form-group">
+                          
+                          <div class="col-xs-6">
+                              <label for="new_pass"><h4>New Password</h4></label>
+                              <input class="form-control" name="newpass" type="password" id="new_pass" placeholder="New Password" title="New Password">
+                          </div>
+                      </div>
+                      <div class="form-group">
+                          
+                          <div class="col-xs-6">
+                              <label for="new_pass2"><h4>Verify New Password</h4></label>
+                              <input type="password" class="form-control" id="New_pass2" name="newpass2" placeholder="Verify New Password" title="Verify new password.">
+                          </div>
+                      </div>
+                      <div class="form-group">
+                          
+                          <div class="col-xs-6">
+                            <label for="passord"><h4>Verify</h4></label>
+                              <input class="form-control" name="password" id="password" placeholder="Current password to verify any change" title="enter your current password." type="password" required="true">
+                          </div>
+                      </div>
+                      <div class="form-group">
+                           <div class="col-xs-12">
+                                <br>
+                              	<button class="btn btn-lg btn-success" type="submit"><i class="glyphicon glyphicon-ok-sign"></i> Save</button>
+                                <button class="btn btn-lg" type="reset"><i class="glyphicon glyphicon-repeat"></i>Cancel</button>
+                                <a href="/chat"><button class="btn btn-lg" type="button">Back</button></a>
+                            </div>
+                      </div>
+              	</form>
+              
+              <hr>
+            
+            </div>
+            <!-- end general tab-pane-->
+             
+            <!-- Settings tab pane -->
+            <div class="tab-pane" id="settings">
+            	<div id="Notifs-div" style="padding-top:10px;">
+                    <ul class="list scrollable" id="Notif-list">
+            
+                      <script id="request-template" type="text/x-handlebars-template">
+                        <hr>
+                        <li class="clearfix">
+                          <img id="template-img" src="{% verbatim %}{{ profile_pic }}{% endverbatim %}" height="50" width="50" />
+                          <div class="about">
+                            <div class="name"><p>{% verbatim %}{{friend}}{% endverbatim %}</p></div>
+                          </div> 
+                          <div id="respondToFriend" class="respond" style="padding-left: 10px;display: flex;float: right;">
+                            <button class="fa fa-thumbs-up" ></button>
+                            <button class="fa fa-thumbs-down" ></button>
+                          </div>
+
+                        </li>
+                      </script>
+
+                      <hr>
+                      <li class="clearfix" style="display: flex;">
+                        <img id="template-img" src="{{ profile_pic }}" height="50" width="50" />
+                        <div class="about">
+                          <div style="padding-left:10px ;padding-top: 10px;" class="name"><p style="font-size: 18 ;">Foulen has requested to be your friend</p></div>
+                        </div> 
+                        <div id="respondToFriend" class="respond" style="padding-left: 10px;display: flex;float:right;" >
+                            <button class="fa fa-thumbs-up" style="width:35px;"></button>
+                            <button class="fa fa-thumbs-down" style="width:35px;"></button>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>              	
+            </div>
+
+        </div>
+
+        </div>
+    </div>
+    <div>{{ update_log }}</div>
+</div>
+</body>
