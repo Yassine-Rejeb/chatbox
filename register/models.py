@@ -19,4 +19,6 @@ class mongoConnection():
         self.usersCollection.update_one({'username': username, 'password': password, 'email': email})
     def delete(self, username, password, email):
         self.usersCollection.delete_one({'username': username, 'password': password, 'email': email})
+    def close(self):
+        self.client.close()
     

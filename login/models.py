@@ -35,4 +35,6 @@ class mongoConnection():
         self.usersCollection.delete_one({'username': username, 'password': password, 'email': email})
     def getEmail(self, username):
         return self.usersCollection.find({'username': username})['email']
+    def close(self):
+        self.client.close()
     
