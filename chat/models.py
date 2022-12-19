@@ -2,13 +2,16 @@ import json
 from django.db import models
 import pymongo
 from bson.json_util import dumps
-# Create your models heimport pymongo
+
+# Create your models here
 
 class image(models.Model):
-    cover = models.ImageField(upload_to='images/')
+    img = models.ImageField(upload_to='images/', default='images/default.png')
 
     def __str__(self):
-        return self.title
+        return self.img.name
+
+
 
 class mongoConnection():
     def __init__(self):

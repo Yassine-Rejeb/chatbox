@@ -4,6 +4,8 @@ from django.shortcuts import render
 from django.http import HttpResponse,JsonResponse,FileResponse,HttpResponseNotFound
 from django.shortcuts import redirect
 from . import models
+from django import forms
+from .forms import updateForm
 import json
 
 # INDEX PAGE
@@ -190,50 +192,46 @@ def update(response):
     # GET CURRENT USER
     current_user = response.session['username']
     
-    
-
-    # GET POST DATA
     if response.method == 'POST':
         username = response.POST['username']
         new_password = response.POST['new_password']
         new_password2 = response.POST['new_password2']
-        password = response.POST['current_password']
-        # How to get the picture
-        new_picture = response.FILES.get('new_picture')
+        current_password = response.POST['current_password']
+        # CHECK IF NEW PICTURE IS EMPTY
+        if 'new_picture' in response.FILES:
+            new_picture = response.FILES['new_picture']
+        else:
+            new_picture = ''
+        # INIT LOG
+        update_log = ''
+        dbConn = models.mongoConnection()
+        if username == '' and new_password == '' and new_password2 == '' and new_picture == '':
+            return HttpResponse("No data to update!")
 
-    # print the picture name
-    print(new_picture)
-
-    if new_picture != None:
-        return HttpResponse("Picture updated.")
-
-    # CHECK IF POST DATA IS EMPTY
-    if username == '' and new_password == '' and new_password2 == '' and new_picture == None:
-        return HttpResponse("No data to update!")
-
-    # DB CONNECTION
-    dbConn = models.mongoConnection()
-
-    # INIT LOG
-    update_log = 'What happened:\n'
-
-    # CHECK IF PASSWORD IS CORRECT
-    if dbConn.findPassword(current_user) == password:
-        # CHECK IF PASSWORD IS EMPTY
-        if new_password != '' and new_password2 != '':
-            # UPDATE PASSWORD
-            update_log += updatePassword(response, current_user,new_password,new_password2)
-        # CHECK IF USERNAME IS EMPTY
-        if username != '':
+        # CHECK IF CURRENT PASSWORD IS CORRECT
+        dbConn = models.mongoConnection()
+        if dbConn.findPassword(current_user) != current_password:
+            update_log += "Current password is incorrect.\n"
+        else:
             # UPDATE USERNAME
-            update_log += updateUserName(response, current_user,username)
-            response.session['username'] = username
-        # CHECK IF PIC IS EMPTY
-        if new_picture != None:
-            update_log += updatePicture(response, current_user,new_picture)
-    elif dbConn.findPassword(current_user) != password :  
-        return HttpResponse("Your password is incorrect.")
-    return HttpResponse(update_log)
+            if username != '':
+                update_log += updateUserName(response.session,current_user,username)
+
+            # UPDATE PASSWORD
+            if new_password != '':
+                update_log += updatePassword(response.session,current_user,new_password,new_password2)
+
+            # UPDATE PICTURE
+            if new_picture != None:
+                update_log += updatePicture(response.session,new_picture)
+
+        # CLOSE DB CONNECTION
+        dbConn.close()
+
+        # RETURN LOG
+        return HttpResponse(update_log)
+    return HttpResponse("Something Wrong Happened!\nContact an Admin!")
+
 
 def sendMsg(response):
     # CHECK IF USER IS LOGGED IN
@@ -354,7 +352,6 @@ def getUnreadMsg(response):
         dbConn.close()
         #print('messages:',messages)
         return JsonResponse(messages, safe=False)
-
 
 def markAsRead(response):
     # CHECK IF USER IS LOGGED IN
