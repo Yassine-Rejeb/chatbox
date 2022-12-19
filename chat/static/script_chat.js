@@ -52,7 +52,7 @@
     function getMessages(user){
     // Change the color back to normal
     var userElement = document.getElementById("userID-"+user);
-    userElement.style.color = "white";
+    userElement.style.color = "";
 
     var url = '/chat/get_messages/?to=' + user;
     $.ajax({
@@ -104,8 +104,7 @@
     // Open a chat with first friend automatically
     $(document).ready(function(){
     // Get Friends list
-    var res;
-    res = $.ajax({
+    $.ajax({
         type: "GET",
         url: "friends/",
         success: function(data) {
@@ -164,8 +163,7 @@
     function updateMessages(user){
         // Change the color back to normal
         var userElement = document.getElementById("userID-"+user);
-        userElement.style.color = "white";
-
+        userElement.style.color = "";
         var url = '/chat/get_unread_messages/?to=' + user;
         $.ajax({
             url: url,

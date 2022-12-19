@@ -11,15 +11,22 @@ def alreadyLoggedIn(request):
     return False
 
 def login(request):
+    # CHECK IF USER IS LOGGED IN
     if alreadyLoggedIn(request):
         return redirect('/chat/')
+
     print('Login Page Opened!')
+
     report_loc = 'signin/'
     return render(request, 'login.html', {'loc':report_loc,'error': ''})
+
 def signin(request):
+    # CHECK IF USER IS LOGGED IN
     if alreadyLoggedIn(request):
         return redirect('/chat/')
+    
     print('Login Request Made!')
+    
     # GET REQUEST PARAMS
     email = request.POST['email']
     password = request.POST['password']
@@ -38,10 +45,14 @@ def signin(request):
     user=dbConn.findEmail(email)
     if  user['password'] != password:
         print('Password incorrect!')
+        # CLOSE DB CONNECTION
+        dbConn.close()
         return render(request, 'login.html', {'loc':'','error': 'Email and password do not match!'})
     else:
         print('Login Successful!')
         print(user['username'])
         request.session['username'] = user['username']
+        # CLOSE DB CONNECTION
+        dbConn.close()
         return redirect('/chat/')
     
