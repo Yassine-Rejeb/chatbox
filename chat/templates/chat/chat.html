@@ -7,64 +7,146 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
   <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css'>
   <link rel="stylesheet" href="{% static 'style.css' %}">
-  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <style>
+    /* Style the profile settings container */
+    .profile-settings {
+      width: 400px;
+      padding: 20px;
+      background-color: #434651;
+      border: 1px solid #ccc;
+    }
+    /* Style the form elements */
+    .profile-settings form {
+      margin: auto;
+      width: 80%;
+    }
+    .profile-settings form label {
+      display: block;
+      margin-bottom: 0.5em;
+    }
+    .profile-settings form input[type="text"],
+    .profile-settings form input[type="password"],
+    .profile-settings form input[type="email"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      margin-bottom: 1em;
+    }
+    .profile-settings form button[type="submit"] {
+      width: 100%;
+      padding: 12px;
+      background-color: #4caf50;
+      color: rgb(0, 0, 0);
+      border: none;
+      cursor: pointer;
+    }
+    /* Style the avatar image */
+    .profile-settings img.avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin: auto;
+      display: block;
+      margin-bottom: 1em;
+    }
+    .floating-window {
+    position: fixed;
+    left: 45%;
+    top: 10%;
+    width: 300px;
+    height: 600px;
+    border: 1px solid ;
+    border-radius: 1%;
+    z-index: 1;
+  }
+  /* This class will hide the floating window */
+  .hidden {
+    display: none;
+  }
+  </style>
+
 </head>
+
 <body>
-<!-- partial:index.partial.html -->
+<div id="floating-window" class="profile-settings floating-window hidden">
+
+  <!-- The avatar image -->
+   <img src="/chat/profile_pic/?username={{current_user}}" class="avatar">
+
+  <!-- The form for updating the profile settings -->
+  <form action="/chat/update/" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="new_picture">Profile Picture:</label>
+    <input id="new_picture" type="file" name="new_picture" accept="image/*"/>
+
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username">
+
+    <label for="new_password">New Password:</label>
+    <input type="password" id="password1" name="new_password">
+
+    <label for="v_new_password">Verify New Password:</label>
+    <input type="password" id="password2" name="new_password2">
+
+    <label for="current_password">Current Password:</label>
+    <input type="password" id="password_old" name="current_password">
+
+    <button type="submit" id="UpdateProfileBtn">Update Settings</button>
+  </form>
+</div>
+
 <div class="container clearfix">
+    <!-------------------- Friend list div -------------->
     <div class="people-list" id="people-list">
-      <div class="search">
-        <input type="text" placeholder="search" />
-        <i class="fa fa-search"></i>
+      <div>
+        <strong><p style="text-align: center;padding-top: 5px;color: aqua ;font-size: large;">Chat List</p></strong>
       </div>
-      <ul class="list">
-        <li class="clearfix">
-          <img src="{% static 'images/yassine-rejeb.jpg' %}" height="50" width="50" alt="yass" />
-          <div class="about">
-            <div class="name">Yassine Rejeb</div>
-          </div>
-        </li>
-        
-        <li class="clearfix">
-          <img src="{% static 'images/iheb-mastouri.jpg' %}" alt="sample.jpg" height="50" width="50" />
-          <div class="about">
-            <div class="name">Iheb Mastouri</div>
-          </div>
-        </li>
-        
-        <li class="clearfix">
-          <img src="{% static 'images/chxmxii.jpg' %}" alt="chxmxii" height="50" width="50" />
-          <div class="about">
-            <div class="name">CHXMXII-Mouhib</div>
-          </div>
-        </li>
-        
-        <li class="clearfix">
-          <img src="{% static 'images/profile.png' %}" alt="avatar" height="50" width="50"/>
-          <div class="about">
-            <div class="name">Foulen Ben Foulen</div>
-          </div>
-        </li>
-      </ul>
+      <div id="friends-div">
+        <ul class="list scrollable" id="friend-list">
+
+          <script id="friend-template" type="text/x-handlebars-template">
+            <li  class="clearfix" onclick="openChat(event)">
+              <img id="template-img" src="{% verbatim %}{{ profile_pic }}{% endverbatim %}" height="50" width="50" />
+              <div class="about">
+                <div class="name"><p id="userID-{% verbatim %}{{ friend }}{% endverbatim %}">{% verbatim %}{{friend}}{% endverbatim %}</p></div>
+              </div> 
+            </li>
+          </script>
+
+        </ul>
+      </div>
+      <!---{% verbatim %}{{ update_log }}{% endverbatim %}-->
       <div id="profileADD" style="position:relative; padding-left: 20px;width: 220px;">
-        <div class="profileDiv" style="height: 45px;">
-          {{current_user}}
-          <a href="/chat/logout" > <button id="logoutButton" >LOGOUT</button> </a>
+        <div  style="height: 45px;display: flex;"> <!--class="profileDiv"-->
+          <p style="font-size: 22px;padding-left: 10px;padding-right: 20px;padding-top: 10px;float:inline-start;">{{current_user}}</p>
+          <div>
+            <a  href="/chat/logout"><button style="height: 45px; width: 45px;" id="logoutButton" class="fa fa-sign-out" ></button></a>
+          </div>
+          <div>
+              <button style="height: 45px; width: 45px;"  class="fa fa-gear" id="toggle-floating-window" ></button>
+          </div>
         </div>
         <div style="display: flex;">
-          <input style="display: flex;" type="text" name="Add_user" placeholder="Add a friend" id="add_user">
-          <i style="padding-top: 17px;" class="fa fa-plus"></i>
-          <button>ADD</button>
-        </div>
+          <input style="width:fit-content;" type="text" name="Add_user" placeholder="add/rm a friend" id="AddFriendInput">
+          <div class="fabox" style="display: flex;">
+            <button id="AddFriendBtn" class="fa fa-plus" style="color: #4caf50;" ></button>
+            <button id="RemoveFriendBtn" class="fa fa-minus" style="color: rgba(189, 4, 4, 0.733);"></button>
+          </div>
+          </div>
         </div>
     </div>
-    
+    <!-- End Friend list div -->
+
+    <!-------------------- Chat div -------------->
     <div class="chat">
       <div class="chat-header clearfix">
-        <img src="{% static 'images/yassine-rejeb.jpg' %}" height="50" width="50" alt="avatar" />
+        <img id="otherEndUser" src="" height="50" width="50" alt="avatar" />
         
         <div class="chat-about">
-          <div class="chat-with">Chat with Yassine Rejeb</div>
+          <div class="chat-with"><p>Chat with </p></div>
         </div>
       </div> 
       
@@ -84,41 +166,54 @@
         <i class="fa fa-file-o"></i> &nbsp;&nbsp;&nbsp;
         <i class="fa fa-file-image-o"></i>
         
-        <button>Send</button>
+        <button onclick="sendMsg()" >Send</button>
 
       </div> <!-- end chat-message -->
       
-    </div> <!-- end chat -->
-    
-  </div> <!-- end container -->
+    </div>
+    <!-------------------- End Chat div ---------->
+  
+</div> 
+<div id="csrf">
+  {% csrf_token %}
+</div>
 
+<!------------- Template Out message ------------->
 <script id="message-template" type="text/x-handlebars-template">
   <li class="clearfix">
     <div class="message-data align-right">
-      <span class="message-data-time" >{% verbatim %}{{time}}{% endverbatim %}, Today</span> &nbsp; &nbsp;
-      <span class="message-data-name" >Myself</span> <i class="fa fa-circle me"></i>
+      <span class="message-data-time" >{% verbatim %}{{time}}{% endverbatim %}</span> &nbsp; &nbsp;
+      <span class="message-data-name" >{% verbatim %}{{user}}{% endverbatim %}</span>
     </div>
     <div class="message other-message float-right">
-      {% verbatim %}{{messageOutput}}{% endverbatim %} <!--jinja2 template-->
+      {% verbatim %}{{msg}}{% endverbatim %} <!--jinja2 template-->
     </div>
   </li>
 </script>
+<!------------- End Template Out message --------->
 
+<!------------- Template In message ------------->
 <script id="message-response-template" type="text/x-handlebars-template">
   <li>
     <div class="message-data">
-      <span class="message-data-name"><i class="fa fa-circle online"></i> Yassine Rejeb</span>
-      <span class="message-data-time">{% verbatim %}{{time}}{% endverbatim %}, Today</span>
+      <span class="message-data-name">{% verbatim %}{{user}}{% endverbatim %} </span>
+      <span class="message-data-time">{% verbatim %}{{time}}{% endverbatim %}</span>
     </div>
     <div class="message my-message">
-      {% verbatim %}{{response}}{% endverbatim %}
+      {% verbatim %}{{msg}}{% endverbatim %}
     </div>
   </li>
 </script>
-<!-- partial -->
+<!------------- Template Out message ------------->
+
+<!--------------- Imported scripts --------------->
 <script src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
 <script src='//cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.0/handlebars.min.js'></script>
-<script src='//cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js'></script><script  src="{% static 'script.js' %}"></script>
+<script src='//cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js'></script>
+<!--<script  src="{% static 'script.js' %}"></script>-->
+<script  src="{% static 'script_friends.js' %}"></script>
+<script  src="{% static 'script_chat.js' %}"></script>
+<!--------------- End Imported scripts --------------->
 
 </body>
 </html>

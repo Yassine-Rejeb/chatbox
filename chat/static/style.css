@@ -17,7 +17,10 @@ body {
   background: #444753;
   border-radius: 5px;
 }
-
+.scrollable {
+  height: 100%;
+  overflow-y: scroll;
+}
 .people-list {
   width: 260px;
   float: left;
@@ -36,7 +39,11 @@ body {
 }
 .fa-plus {
   position: relative;
-  left: -25px;
+  left: -42px;
+}
+.fa-minus {
+  position: relative;
+  left: -42px;
 }
 .people-list .fa-search {
   position: relative;
@@ -44,7 +51,7 @@ body {
 }
 .people-list ul {
   padding: 20px;
-  height: 560px;
+  height: 620px;
 }
 .people-list ul li {
   padding-bottom: 20px;
@@ -170,6 +177,10 @@ body {
   background: #F2F5F8;
 }
 .chat .chat-message button:hover {
+  color: #75b1e8;
+}
+
+.clearfix li:hover {
   color: #75b1e8;
 }
 
