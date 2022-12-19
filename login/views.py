@@ -5,7 +5,7 @@ from login.models import mongoConnection
 from django.shortcuts import redirect
 
 def alreadyLoggedIn(request):
-    print('Already Logged In!')
+    #print('Already Logged In!')
     if 'username' in request.session:
         return True
     return False
@@ -15,7 +15,7 @@ def login(request):
     if alreadyLoggedIn(request):
         return redirect('/chat/')
 
-    print('Login Page Opened!')
+    #print('Login Page Opened!')
 
     report_loc = 'signin/'
     return render(request, 'login.html', {'loc':report_loc,'error': ''})
@@ -25,7 +25,7 @@ def signin(request):
     if alreadyLoggedIn(request):
         return redirect('/chat/')
     
-    print('Login Request Made!')
+    #print('Login Request Made!')
     
     # GET REQUEST PARAMS
     email = request.POST['email']
