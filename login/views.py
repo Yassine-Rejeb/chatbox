@@ -20,6 +20,12 @@ def login(request):
     report_loc = 'signin/'
     return render(request, 'login.html', {'loc':report_loc,'error': ''})
 
+def encryptPassword(password):
+    # Hash a password with SHA256
+    import hashlib
+    hash_object = hashlib.sha256(password.encode())
+    return hash_object.hexdigest()
+
 def signin(request):
     # CHECK IF USER IS LOGGED IN
     if alreadyLoggedIn(request):
@@ -43,7 +49,7 @@ def signin(request):
     
     # CHECK IF PASSWORD IS CORRECT
     user=dbConn.findEmail(email)
-    if  user['password'] != password:
+    if  user['password'] != encryptPassword(password):
         print('Password incorrect!')
         # CLOSE DB CONNECTION
         dbConn.close()

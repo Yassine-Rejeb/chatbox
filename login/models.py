@@ -16,7 +16,7 @@ def sendVerificationEmail(email):
 
 class mongoConnection():
     def __init__(self):
-        self.client = pymongo.MongoClient("mongodb://localhost:27017/")
+        self.client = pymongo.MongoClient("mongodb://mongodb-server:27017/")
         self.db = self.client['chatbox']
         self.usersCollection = self.db['users']
     def insert(self, username, password, email, verified):

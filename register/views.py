@@ -32,7 +32,7 @@ def signup(request):
         return render(request, 'register.html', {'loc':'', 'error': 'Username already taken!'})
     
     # CREATE USER
-    dbConn.insert(username, password, email, False)
+    dbConn.insert(username, password, email, True)
     print('User Created!')
 
     # CLOSE DB CONNECTION

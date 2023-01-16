@@ -21,6 +21,28 @@ $('#AddFriendBtn').click(function() {
   });
   
   // Make a get request to the server to remove a friend
+  $('#RemoveFriendBtn').click(function() {
+  $.ajax({
+        type: "GET",
+        url: "/chat/remove_friend/?friend=" + $('#AddFriendInput').val(),
+        data: {
+          username: $('#AddFriendInput').val()
+        },
+        success: function(data) {
+          console.log($('#AddFriendInput').val());
+          console.log(data);
+          if (data == 'success') {
+            location.reload();
+          }
+          else {
+            alert(data);
+          }
+        }
+    });
+    return false;
+  });
+
+
   $('#cancelBtn').click(function() {
     // empty the input fields after the user has clicked the cancel button
     var new_picture = $('#new_picture').val('');
@@ -41,10 +63,16 @@ $('#AddFriendBtn').click(function() {
         url: '/chat/update/',
         data: formData, // include the FormData object in the request
         processData: false, // prevent jQuery from trying to process the form data
-        contentType: false, // tell the server not to set the Content-Type header
+        //contentType: false,
+        //contentType: 'application/json',
+        //cache: false,
+        //async: false,
+        //enctype: 'multipart/form-data',
+        contentType: false,
         success: function(response) {
           // handle the response here
           alert(response);
+          console.log(response);
         }
       });
     });

@@ -4,9 +4,6 @@ from django.shortcuts import render
 from django.http import HttpResponse,JsonResponse,FileResponse,HttpResponseNotFound
 from django.shortcuts import redirect
 from . import models
-from django import forms
-from .forms import updateForm
-import json
 
 # INDEX PAGE
 def index(response):
@@ -168,6 +165,8 @@ def updateUserName(session,current_user,username):
 
 def updatePicture(session,pic):
     # CHECK IF FILE IS AN IMAGE
+    if type(pic) == str:
+        return "File is not an image.\n"
     if pic.content_type == 'image/jpeg' or pic.content_type == 'image/png':
         # CHECK IF FILE IS TOO BIG
         if pic.size > 5000000:
@@ -179,8 +178,12 @@ def updatePicture(session,pic):
                 for chunk in pic.chunks():
                     destination.write(chunk)
             return "Picture updated.\n"
-    else:
-        return "File is not an image.\n"
+
+def encryptPassword(password):
+    # Hash a password with SHA256
+    import hashlib
+    hash_object = hashlib.sha256(password.encode())
+    return hash_object.hexdigest()
 
 def update(response):
     # CHECK IF USER IS LOGGED IN
@@ -193,7 +196,8 @@ def update(response):
     current_user = response.session['username']
     
     if response.method == 'POST':
-        username = response.POST['username']
+        #username = response.POST['username']
+        username = ''
         new_password = response.POST['new_password']
         new_password2 = response.POST['new_password2']
         current_password = response.POST['current_password']
@@ -210,7 +214,7 @@ def update(response):
 
         # CHECK IF CURRENT PASSWORD IS CORRECT
         dbConn = models.mongoConnection()
-        if dbConn.findPassword(current_user) != current_password:
+        if dbConn.findPassword(current_user) != encryptPassword(current_password):
             update_log += "Current password is incorrect.\n"
         else:
             # UPDATE USERNAME
@@ -231,7 +235,6 @@ def update(response):
         # RETURN LOG
         return HttpResponse(update_log)
     return HttpResponse("Something Wrong Happened!\nContact an Admin!")
-
 
 def sendMsg(response):
     # CHECK IF USER IS LOGGED IN

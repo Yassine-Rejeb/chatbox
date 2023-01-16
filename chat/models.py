@@ -11,19 +11,27 @@ class image(models.Model):
     def __str__(self):
         return self.img.name
 
-
+def encryptPassword(password):
+    # Hash a password with SHA256
+    import hashlib
+    hash_object = hashlib.sha256(password.encode())
+    return hash_object.hexdigest()
 
 class mongoConnection():
     def __init__(self):
-        self.client = pymongo.MongoClient("mongodb://localhost:27017/")
+        self.client = pymongo.MongoClient("mongodb://mongodb-server:27017/")
         self.db = self.client['chatbox']
         self.usersCollection = self.db['users']
         self.msgCollection = self.db['messages']
+    
+    def createSupportUserIfNotExists(self):
+        if self.usersCollection.find_one({'username': 'support'}) == 0:
+            self.usersCollection.insert_one({'username': 'support', 'password': encryptPassword('Rly5trongP4$sw0rd'), 'email': 'support@chatbox.tn', 'verified': True, 'friends': []})  
 
-    
     def insert(self, username, password, email, verified):
-        self.usersCollection.insert_one({'username': username, 'password': password, 'email': email, 'verified': verified, 'friends': ["support"], 'requests_sent' : [], 'requests_received' : []})
-    
+        self.usersCollection.insert_one({'username': username, 'password': encryptPassword(password), 'email': email, 'verified': verified, 'friends': ["support"], 'requests_sent' : [], 'requests_received' : []})
+        self.createSupportUserIfNotExists()
+
     def find(self, username, password):
         return self.usersCollection.find_one({'username': username, 'password': password})
     
@@ -46,10 +54,10 @@ class mongoConnection():
         return self.usersCollection.find_one({'username': username, 'friends': friend})
 
     def update(self, username, password, email):
-        self.usersCollection.update_one({'username': username, 'password': password, 'email': email})
+        self.usersCollection.update_one({'username': username, 'password': encryptPassword(password), 'email': email})
     
     def delete(self, username, password, email):
-        self.usersCollection.delete_one({'username': username, 'password': password, 'email': email})  
+        self.usersCollection.delete_one({'username': username, 'password': encryptPassword(password), 'email': email})  
     
     def addFriend(self, username, friend):
         self.usersCollection.update_one({'username': username}, {'$push': {'friends': friend}})
@@ -60,7 +68,7 @@ class mongoConnection():
         self.usersCollection.update_one({'username': friend}, {'$pull': {'friends': username}})
 
     def updatePassword(self, username, password):
-        self.usersCollection.update_one({'username': username}, {'$set': {'password': password}})
+        self.usersCollection.update_one({'username': username}, {'$set': {'password': encryptPassword(password)}})
     
     def updateUsername(self, username, newUsername):
         self.usersCollection.update_one({'username': username}, {'$set': {'username': newUsername}})
